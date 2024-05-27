@@ -1,11 +1,11 @@
 #!/bin/bash
 
-read -t 5 -p "Prompt " RESP
+read -t 5 -p "A new RGS version is available. Press a key to upgrade." RESP
 if [[ $? -gt 30 ]] ; then
-    echo -e "\nTimeout"
-else
-    echo "Response = \"$RESP\""  # adding quotes so empty strings are obvious
+    exit 0
 fi
 
+
+
 echo "tutu"
-sleep 130
+sleep 10
