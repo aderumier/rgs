@@ -5,7 +5,34 @@ if [[ $? -gt 30 ]] ; then
     exit 0
 fi
 
+$ARCHIVE="upgrade.tar.gz"
+$ARCHIVEPATH="/userdata/extraction/$ARCHIVE"
+
+#read old configuration before "RGS RUNING", for user system changes
+readarray -t OLDCONF < <(grep -B100000 "RGS TUNING" /userdata/system/batocera.conf)
+
+#download pack
+wget -progress=dot:binary --no-check-certificate --no-cache --no-cookies -O $ARCHIVEPATH "https://raw.githubusercontent.com/aderumier/rgs/v$BATOVERSION/$ARCHIVE"
+tar -xvzf $ARCHIVEPATH /userdata/
+
+#read new conf after 'RGS TUNING' , for games tuning
+readarray -t NEWCONF < <(awk '{if(found) print} /RGS TUNING/{found=1}' /userdata/system/batocera.conf)
 
 
-echo "tutu"
+echo "" > /userdata/system/batocera.conf.new
+
+for ((i=0; i<${#OLDCONF[@]}; i++)); do
+  echo "${OLDCONF[$i]}" >> /userdata/system/batocera.conf.new
+done
+
+for ((i=0; i<${#NEWCONF[@]}; i++)); do
+  echo "${NEWCONF[$i]}" >> /userdata/system/batocera.conf.new
+done
+
+mv /userdata/system/batocera.conf.new /userdata/system/batocera.conf
+
+
+# rm ...
+
+
 sleep 10
